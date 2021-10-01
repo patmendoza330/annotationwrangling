@@ -329,6 +329,10 @@ stores the number of gene ontology terms for each locusName. When a new
 GO term is introduced in the table, the Var column has an incremented
 value.
 
+The pivot\_wider function (below) will give us our final desired table.
+If a locusName does not have a GO term for a specific column, NA is
+entered.
+
 ``` r
 gene.GO <- gene.GO %>%
   pivot_wider(names_from = Var, values_from = GO)
@@ -344,91 +348,4 @@ knitr::kable(head(gene.GO), "pipe")
 | Bradi1g00200    | <GO:0005515>, molecular\_function, protein binding,                                                                                                                                                | NA                                                                 | NA  | NA  | NA  | NA  | NA  | NA  | NA  |
 | Bradi1g00210    | <GO:0005515>, molecular\_function, protein binding,                                                                                                                                                | NA                                                                 | NA  | NA  | NA  | NA  | NA  | NA  | NA  |
 
-Gene ontology
-
-``` r
-GOFile <- read.delim("supporting.files/go.obo.txt", header = TRUE, sep = "\t", stringsAsFactors = FALSE)
-names(GOFile)[1] <- 'GOID'
-```
-
-``` r
-# adj_annot <- tibble::as_tibble(y)
-# # select only certain fields from the genome annotation file for use in the RNA-seq 
-# adj_annot <- adj_annot %>%
-#   dplyr::select(locusName, transcriptName, Best.hit.arabi.name, arabi.symbol, arabi.defline, Panther, GO)
-# 
-# # We will group by the locus name and collapse all fields into one separated by a comma, later we will select only unique items from the summarized fields
-# adj_annot <- adj_annot %>%
-#   group_by(locusName) %>%
-#   summarise(transcriptName1 = paste(transcriptName, collapse = ","), Best.hit.arabi.name1 = paste(Best.hit.arabi.name, collapse = ","), arabi.symbol1 = paste(arabi.symbol, collapse = ","), arabi.defline1 = paste(arabi.defline, collapse = ","), Panther1 = paste(Panther, collapse = ","), GO1 = paste(GO, collapse = ","), numTranscripts = length(arabi.symbol))
-# 
-# # Each collapsed column will be split by the comma delimiter and then unique entries extracted and replaced in the existing column
-# 
-# # transcriptName1
-# adj_annot$transcriptName1 <- sapply(strsplit(adj_annot$transcriptName1, ","), function(x){
-#   paste(unique(trimws(x)), collapse = ",")
-# })
-# #remove comma at end of column
-# adj_annot$transcriptName1 <- gsub(",$", "", adj_annot$transcriptName1)
-# 
-# # Best.hit.arabi.name1
-# adj_annot$Best.hit.arabi.name1 <- sapply(strsplit(adj_annot$Best.hit.arabi.name1, ","), function(x){
-#   paste(unique(trimws(x)), collapse = ",")
-# })
-# adj_annot$Best.hit.arabi.name1 <- gsub(",$", "", adj_annot$Best.hit.arabi.name1)
-# 
-# # arabi.symbol1
-# adj_annot$arabi.symbol1 <- sapply(strsplit(adj_annot$arabi.symbol1, ","), function(x){
-#   paste(unique(trimws(x)), collapse = ",")
-# })
-# adj_annot$arabi.symbol1 <- gsub(",$", "", adj_annot$arabi.symbol1)
-# 
-# # arabi.defline1
-# adj_annot$arabi.defline1 <- sapply(strsplit(adj_annot$arabi.defline1, ","), function(x){
-#   paste(unique(trimws(x)), collapse = ",")
-# })
-# adj_annot$arabi.defline1 <- gsub(",$", "", adj_annot$arabi.defline1)
-# 
-# # Panther1
-# adj_annot$Panther1 <- sapply(strsplit(adj_annot$Panther1, ","), function(x){
-#   paste(unique(trimws(x)), collapse = ",")
-# })
-# adj_annot$Panther1 <- gsub(",$", "", adj_annot$Panther1)
-# 
-# # GO1
-# adj_annot$GO1 <- sapply(strsplit(adj_annot$GO1, ","), function(x){
-#   paste(unique(trimws(x)), collapse = ",")
-# })
-# adj_annot$GO1 <- gsub(",$", "", adj_annot$GO1)
-# adj_annot$locusName <- paste0(adj_annot$locusName, ".v3.1")
-# names(adj_annot)[1] <- "GeneID"
-```
-
-This is an R Markdown document. Markdown is a simple formatting syntax
-for authoring HTML, PDF, and MS Word documents. For more details on
-using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that
-includes both content as well as the output of any embedded R code
-chunks within the document. You can embed an R code chunk like this:
-
-``` r
-summary(cars)
-```
-
-    ##      speed           dist       
-    ##  Min.   : 4.0   Min.   :  2.00  
-    ##  1st Qu.:12.0   1st Qu.: 26.00  
-    ##  Median :15.0   Median : 36.00  
-    ##  Mean   :15.4   Mean   : 42.98  
-    ##  3rd Qu.:19.0   3rd Qu.: 56.00  
-    ##  Max.   :25.0   Max.   :120.00
-
-## Including Plots
-
-You can also embed plots, for example:
-
-![](datawrangling_files/figure-gfm/pressure-1.png)<!-- -->
-
-Note that the `echo = FALSE` parameter was added to the code chunk to
-prevent printing of the R code that generated the plot.
+# Citations
