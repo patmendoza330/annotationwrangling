@@ -35,6 +35,13 @@ Here is a sample of what each files looked like:
 | <GO:0000006> | high-affinity zinc transmembrane transporter activity    | molecular\_function |                         | Enables the transfer of zinc ions (Zn2+) from one side of a membrane to the other, probably powered by proton motive force. In high-affinity transport the transporter is able to bind the solute even if it is only present at very low concentrations. \[TC:2.A.5.1.1\]                                                               |
 | <GO:0000007> | low-affinity zinc ion transmembrane transporter activity | molecular\_function |                         | Enables the transfer of a solute or solutes from one side of a membrane to the other according to the reaction: Zn2+ = Zn2+, probably powered by proton motive force. In low-affinity transport the transporter is able to bind the solute only if it is present at very high concentrations. \[GOC:mtg\_transport, <ISBN:0815340729>\] |
 
+Its important to note that the gene ontology file has already been
+modified from its intial format in the [Converting non-tabular data into
+tabular data using
+Python](https://github.com/patmendoza330/geneontologyconversion)
+repository. Feel free to look that over for ways in which I modified
+that format into tabular format.
+
 ## Issues
 
 So, there were several issues, I needed to:
@@ -46,6 +53,15 @@ So, there were several issues, I needed to:
 2.  Split the comma delimited gene ontology column into as many columns
     were necessary and include the definition for those terms from the
     gene ontology file.
+
+## Running files in respository
+
+All of the script is held in the
+[datawrangling.rmd](https://github.com/patmendoza330/annotationwrangling/blob/main/datawrangling.rmd)
+r markdown file and files in the
+[supporting.files](https://github.com/patmendoza330/annotationwrangling/tree/main/supporting.files)
+folder. I would recomend downloading those files and running the
+markdown file in RStudio.
 
 ## Solution
 
@@ -71,8 +87,8 @@ need.
 Firs things first, lets load in the table:
 
 ``` r
-y <- read.delim("supporting.files/Bdistachyon_314_v3.1.annotation_info.txt", header = TRUE, sep = "\t", stringsAsFactors = FALSE)
-knitr::kable(head(y), "pipe")
+y1 <- read.delim("supporting.files/Bdistachyon_314_v3.1.annotation_info.txt", header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+knitr::kable(head(y1), "pipe")
 ```
 
 |  X.pacId | locusName       | transcriptName    | peptideName         | Pfam                    | Panther                   | KOG | KEGG.ec | KO     | GO           | Best.hit.arabi.name | arabi.symbol | arabi.defline                                   | Best.hit.rice.name | rice.symbol | rice.defline                              |
@@ -87,7 +103,7 @@ knitr::kable(head(y), "pipe")
 Next, lets select only the fields that we want:
 
 ``` r
-y <- y %>% select(locusName, GO)
+y <- y1 %>% select(locusName, GO)
 knitr::kable(head(y), "pipe")
 ```
 
@@ -348,4 +364,40 @@ knitr::kable(head(gene.GO), "pipe")
 | Bradi1g00200    | <GO:0005515>, molecular\_function, protein binding,                                                                                                                                                | NA                                                                 | NA  | NA  | NA  | NA  | NA  | NA  | NA  |
 | Bradi1g00210    | <GO:0005515>, molecular\_function, protein binding,                                                                                                                                                | NA                                                                 | NA  | NA  | NA  | NA  | NA  | NA  | NA  |
 
+Now, if we wanted to add this back to our original annotation file, we’d
+simply make a join between this new table and our original:
+
+``` r
+y1 <- y1 %>%
+  left_join(gene.GO, by="locusName")
+knitr::kable(head(y1), "pipe")
+```
+
+|  X.pacId | locusName       | transcriptName    | peptideName         | Pfam                    | Panther                   | KOG | KEGG.ec | KO     | GO           | Best.hit.arabi.name | arabi.symbol | arabi.defline                                   | Best.hit.rice.name | rice.symbol | rice.defline                              | GO1                                                                                                                                     | GO2 | GO3 | GO4 | GO5 | GO6 | GO7 | GO8 | GO9 |
+| -------: | :-------------- | :---------------- | :------------------ | :---------------------- | :------------------------ | :-- | :------ | :----- | :----------- | :------------------ | :----------- | :---------------------------------------------- | :----------------- | :---------- | :---------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- |
+| 32823775 | Bradi0012s00100 | Bradi0012s00100.1 | Bradi0012s00100.1.p | PF03144,PF03143,PF00009 | PTHR23115,PTHR23115:SF157 |     | 3.6.5.3 | K03231 | <GO:0005525> | AT1G07920.1         |              | GTP binding Elongation factor Tu family protein | LOC\_Os03g08010.1  | NA          | elongation factor Tu, putative, expressed | <GO:0005525>, molecular\_function, GTP binding, Interacting selectively and non-covalently with GTP, guanosine triphosphate. \[GOC:ai\] | NA  | NA  | NA  | NA  | NA  | NA  | NA  | NA  |
+| 32823776 | Bradi0012s00201 | Bradi0012s00201.1 | Bradi0012s00201.1.p |                         |                           |     |         |        |              |                     |              |                                                 |                    | NA          |                                           | NA                                                                                                                                      | NA  | NA  | NA  | NA  | NA  | NA  | NA  | NA  |
+| 32823777 | Bradi0012s00201 | Bradi0012s00201.2 | Bradi0012s00201.2.p |                         |                           |     |         |        |              |                     |              |                                                 |                    | NA          |                                           | NA                                                                                                                                      | NA  | NA  | NA  | NA  | NA  | NA  | NA  | NA  |
+| 32823779 | Bradi0012s00201 | Bradi0012s00201.3 | Bradi0012s00201.3.p |                         |                           |     |         |        |              |                     |              |                                                 |                    | NA          |                                           | NA                                                                                                                                      | NA  | NA  | NA  | NA  | NA  | NA  | NA  | NA  |
+| 32823780 | Bradi0012s00201 | Bradi0012s00201.4 | Bradi0012s00201.4.p |                         |                           |     |         |        |              |                     |              |                                                 |                    | NA          |                                           | NA                                                                                                                                      | NA  | NA  | NA  | NA  | NA  | NA  | NA  | NA  |
+| 32823778 | Bradi0012s00201 | Bradi0012s00201.5 | Bradi0012s00201.5.p |                         |                           |     |         |        |              |                     |              |                                                 |                    | NA          |                                           | NA                                                                                                                                      | NA  | NA  | NA  | NA  | NA  | NA  | NA  | NA  |
+
+# Conclusion
+
+We now have a an annotation table that includes not just the GO terms
+without definitions, but all deifinitions for each GO term included in
+their own column.
+
 # Citations
+
+Ashburner, et al. (2000, 2000/05/01). Gene Ontology: tool for the
+unification of biology. Nature Genetics, 25(1), 25-29.
+<https://doi.org/10.1038/75556>
+
+Gene Ontology, C. (2021). The Gene Ontology resource: enriching a GOld
+mine. Nucleic acids research, 49(D1), D325-D334.
+<https://doi.org/10.1093/nar/gkaa1113>
+
+The International Brachypodium, I. (2010, 02/11/online). Genome
+sequencing and analysis of the model grass Brachypodium distachyon
+\[Article\]. Nature, 463, 763. <https://doi.org/10.1038/nature08747>
